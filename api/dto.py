@@ -9,7 +9,7 @@ def materia_to_dict(materia: Materia):
         "nombre_docente": materia.get_nombre_docente(),
         "nota_min_aprobar": materia.get_nota_min_aprobar(),
         "es_promocionable": materia.get_es_promocionable(),
-        "nota_min_promocion": materia.get_nombre_materia(),
+        "nota_min_promocion": materia.get_nota_min_promocion(),
         "cant_veces_final_rendible": materia.get_cant_veces_final_rendible(),
         "cant_parciales": materia.get_cant_parciales()
     }

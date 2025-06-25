@@ -11,6 +11,7 @@ from Dominio.Funciones_sistema.Logica_negocio.builder_determinador import Builde
 app = Flask(__name__)
 
 repo = Facade_Persistencia()
+repo.crear_base()
 builder = Builder_Determinador()
 builder.construir()
 determiner = builder.get_resultado()
@@ -21,7 +22,7 @@ handlers = {
     "final": FinalHandler()
 }
 
-controller = MateriaController(repo, determiner, handlers)
+controller = MateriaController(repo, determiner)
 
 app.register_blueprint(crear_rutas(controller))
 

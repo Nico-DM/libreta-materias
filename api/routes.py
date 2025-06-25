@@ -49,7 +49,7 @@ def crear_rutas(controller):
     def obtener(id_materia):
         try:
             materia, estado = controller.obtener_materia_con_estado(int(id_materia))
-            return jsonify(materia_con_estado_to_dict(materia, estado))
+            return jsonify(materia_con_estado_to_dict(materia, estado.name))
         except ValueError as e:
             return jsonify({"error": str(e)}), 404
 
