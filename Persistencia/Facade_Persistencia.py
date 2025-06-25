@@ -6,9 +6,7 @@ from Dominio.Materias.materia import Materia
 
 class Facade_Persistencia():
     def __init__(self):
-        self
-        self.cursor = None
-        self.conn = None
+        self.conectar()
 
     def conectar(self):
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -43,7 +41,7 @@ class Facade_Persistencia():
                     cant_veces_final_rendible INTEGER NOT NULL,
                     cant_parciales INTEGER NOT NULL
                 )
-                ''' #es_promocionable es BOOLEAN
+                '''
             )
             self.conn.commit()
     
@@ -82,13 +80,42 @@ class Facade_Persistencia():
             self.cursor.execute(f"DELETE FROM {tabla}")
             self.conn.commit()
 
+    def obtener_materia(self, id):
+        self.cursor.execute("SELECT * FROM Materia WHERE id_materia = ?", (id,))
+        tupla_materia = self.cursor.fetchone()
+        
+        datos = {
+            "id_materia": tupla_materia[0],
+            "nombre_materia": tupla_materia[1],
+            "nombre_docente": tupla_materia[2],
+            "nota_min_aprobar": tupla_materia[3],
+            "es_promocionable": tupla_materia[4],
+            "nota_min_promocion": tupla_materia[5],
+            "cant_veces_final_rendible": tupla_materia[6],
+            "cant_parciales": tupla_materia[7]
+        }
+
+        materia = Materia(datos)
+        
+        return materia
+    
     def obtener_materias(self):
         self.cursor.execute("SELECT * FROM Materia")
         tuplas_materias = self.cursor.fetchall()
         
         materias = []
-        for tupla in tuplas_materias:
-            materia = Materia(tupla)
+        for tupla_materia in tuplas_materias:
+            datos = {
+                "id_materia": tupla_materia[0],
+                "nombre_materia": tupla_materia[1],
+                "nombre_docente": tupla_materia[2],
+                "nota_min_aprobar": tupla_materia[3],
+                "es_promocionable": tupla_materia[4],
+                "nota_min_promocion": tupla_materia[5],
+                "cant_veces_final_rendible": tupla_materia[6],
+                "cant_parciales": tupla_materia[7]
+            }
+            materia = Materia(datos)
             materias.append(materia)
         return materias
     
@@ -126,13 +153,33 @@ class Facade_Persistencia():
         self.cursor.execute(f"UPDATE Materia SET {campo} = ? WHERE id_materia = ?", (valor, ID))
         self.conn.commit()
     
+    def obtener_parcial(self, id):
+        self.cursor.execute("SELECT * FROM Parcial WHERE id_nota = ?", (id,))
+        tupla_parcial = self.cursor.fetchone()  # Tupla
+        
+        datos = {
+            "id_nota": tupla_parcial[0],
+            "id_materia": tupla_parcial[1],
+            "valor_nota": tupla_parcial[2],
+            "valor_recuperatorio": tupla_parcial[3]
+        }
+        parcial = Parcial(datos)
+            
+        return parcial
+    
     def obtener_parciales(self, materia):
         self.cursor.execute("SELECT * FROM Parcial WHERE id_materia = ?", (materia.get_id_materia(),))
         tuplas_parciales = self.cursor.fetchall()  # Lista de tuplas
         
         parciales = []
-        for tupla in tuplas_parciales:
-            parcial = Parcial(tupla)
+        for tupla_parcial in tuplas_parciales:
+            datos = {
+                "id_nota": tupla_parcial[0],
+                "id_materia": tupla_parcial[1],
+                "valor_nota": tupla_parcial[2],
+                "valor_recuperatorio": tupla_parcial[3]
+            }
+            parcial = Parcial(datos)
             parciales.append(parcial)
         return parciales
     
@@ -157,13 +204,31 @@ class Facade_Persistencia():
         self.cursor.execute(f"UPDATE Parcial SET {campo} = ? WHERE id_nota = ?", (valor, ID))
         self.conn.commit()
 
+    def obtener_final(self, id):
+        self.cursor.execute("SELECT * FROM Final WHERE id_nota = ?", (id,))
+        tupla_final = self.cursor.fetchone()  # Tupla
+        
+        datos = {
+            "id_nota": tupla_final[0],
+            "id_materia": tupla_final[1],
+            "valor_nota": tupla_final[2]
+        }
+        final = Final(datos)
+            
+        return final
+
     def obtener_finales(self, materia):
         self.cursor.execute("SELECT * FROM Final WHERE id_materia = ?", (materia.get_id_materia(),))
         tuplas_finales = self.cursor.fetchall()  # Lista de tuplas
         
         finales = []
-        for tupla in tuplas_finales:
-            final = Final(tupla)
+        for tupla_final in tuplas_finales:
+            datos = {
+                "id_nota": tupla_final[0],
+                "id_materia": tupla_final[1],
+                "valor_nota": tupla_final[2]
+            }
+            final = Final(datos)
             finales.append(final)
         return finales
     
@@ -188,8 +253,8 @@ class Facade_Persistencia():
         self.cursor.execute(f"UPDATE Final SET {campo} = ? WHERE id_nota = ?", (valor, ID))
         self.conn.commit()
 
-    def agregar_recuperatorio(self, ID, valor):
-        self.cursor.execute("UPDATE Parcial SET valor_recuperatorio = ? WHERE id_nota = ?", (valor, ID))
+    def agregar_recuperatorio(self, id_materia, id_nota, valor):
+        self.cursor.execute("UPDATE Parcial SET valor_recuperatorio = ? WHERE id_materia = ? AND id_nota = ?", (valor, id_materia, id_nota))
         self.conn.commit()
 
     def eliminar_recuperatorio(self, ID):

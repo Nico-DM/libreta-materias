@@ -1,11 +1,11 @@
 from Dominio.Materias.nota import Nota
 
 class Parcial(Nota):
-    def __init__(self, tupla):
-        super().__init__(tupla)
-        if len(tupla) > 3 and tupla[3]:
-            self.__valor_recuperatorio = float(tupla[3])
-        else:
+    def __init__(self, datos: dict):
+        super().__init__(datos)
+        try:
+            self.__valor_recuperatorio = float(datos["valor_recuperatorio"])
+        except Exception:
             self.__valor_recuperatorio = None
 
     def get_valor_recuperatorio(self):

@@ -1,16 +1,16 @@
 class Materia():
-    def __init__(self, tupla):
-        self.__id_materia = int(tupla[0])
-        self.__nombre_materia = str(tupla[1])
-        self.__nombre_docente = str(tupla[2])
-        self.__nota_min_aprobar = float(tupla[3])
-        self.__es_promocionable = tupla[4]
+    def __init__(self, datos: dict):
+        self.__id_materia = int(datos["id_materia"])
+        self.__nombre_materia = str(datos["nombre_materia"])
+        self.__nombre_docente = str(datos["nombre_docente"])
+        self.__nota_min_aprobar = float(datos["nota_min_aprobar"])
+        self.__es_promocionable = datos["es_promocionable"]
         try:
-            self.__nota_min_promocion = float(tupla[5])
+            self.__nota_min_promocion = float(datos["nota_min_promocion"])
         except Exception:
             self.__nota_min_promocion = None
-        self.__cant_veces_final_rendible = int(tupla[6])
-        self.__cant_parciales = int(tupla[7])
+        self.__cant_veces_final_rendible = int(datos["cant_veces_final_rendible"])
+        self.__cant_parciales = int(datos["cant_parciales"])
 
     def get_id_materia(self):
         return self.__id_materia

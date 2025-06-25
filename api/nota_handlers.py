@@ -2,16 +2,16 @@ from abc import ABC, abstractmethod
 
 class NotaHandler(ABC):
     @abstractmethod
-    def ejecutar(self, materia, nota): pass
+    def agregar(self, materia, valor): pass
 
 class ParcialHandler(NotaHandler):
-    def ejecutar(self, materia, nota):
-        materia.agregar_parcial(nota)
+    def agregar(self, materia, valor):
+        materia.agregar_parcial(valor)
 
 class RecuperatorioHandler(NotaHandler):
-    def ejecutar(self, materia, nota):
-        materia.agregar_recuperatorio(nota)
+    def agregar(self, materia, id_nota, valor):
+        materia.agregar_recuperatorio(valor)
 
 class FinalHandler(NotaHandler):
-    def ejecutar(self, materia, nota):
-        materia.agregar_final(nota)
+    def agregar(self, materia, valor):
+        materia.agregar_final(valor)
