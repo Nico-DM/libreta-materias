@@ -1,6 +1,6 @@
 from flask import Flask
 from api.routes import crear_rutas
-from api.controller import MateriaController
+from api.materia_service import MateriaService
 from api.nota_handlers import ParcialHandler, RecuperatorioHandler, FinalHandler
 
 # tus clases reales del dominio
@@ -22,7 +22,7 @@ handlers = {
     "final": FinalHandler()
 }
 
-controller = MateriaController(repo, determiner)
+controller = MateriaService(repo, determiner)
 
 app.register_blueprint(crear_rutas(controller))
 

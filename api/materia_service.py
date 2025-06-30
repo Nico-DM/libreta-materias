@@ -3,7 +3,7 @@ from Dominio.Materias.parcial import Parcial
 from Dominio.Materias.final import Final
 from Dominio.Materias.datos import Datos
 
-class MateriaController:
+class MateriaService:
     def __init__(self, materia_repo, estado_determiner):
         self.repo = materia_repo
         self.determiner = estado_determiner  # solo usado para consulta
