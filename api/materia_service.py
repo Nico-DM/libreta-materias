@@ -36,7 +36,8 @@ class MateriaService:
     def modificar_parcial(self, id: int, atributo: str, valor):
         self.handlers["parcial"].modificar(id, atributo, valor)
     
-    def obtener_parciales(self, materia):
+    def obtener_parciales(self, id_materia):
+        materia = self.handlers["materia"].obtener(id_materia)
         return self.handlers["parcial"].obtener_todas_de(materia)
     
     def agregar_final(self, id: int, valor: float):
@@ -52,7 +53,8 @@ class MateriaService:
     def modificar_final(self, id: int, atributo: str, valor):
         self.handlers["final"].modificar(id, atributo, valor)
     
-    def obtener_finales(self, materia):
+    def obtener_finales(self, id_materia):
+        materia = self.handlers["materia"].obtener(id_materia)
         return self.handlers["final"].obtener_todas_de(materia)
 
     def agregar_recuperatorio(self, id_materia: int, id_nota: int, valor: float):
@@ -61,8 +63,9 @@ class MateriaService:
         return parcial
     
     def determinar_estado(self, materia):
-        parciales = self.obtener_parciales(materia)
-        finales = self.obtener_finales(materia)
+        id_materia = materia.get_id_materia()
+        parciales = self.obtener_parciales(id_materia)
+        finales = self.obtener_finales(id_materia)
         return self.determiner.determinar_estado(Datos(materia, parciales, finales))
 
     def obtener_materia_con_estado(self, id: int):
