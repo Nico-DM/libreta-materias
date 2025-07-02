@@ -4,14 +4,23 @@ from Dominio.Materias.final import Final
 from Dominio.Materias.datos import Datos
 
 class MateriaService:
-    def __init__(self, materia_repo, estado_determiner):
-        self.repo = materia_repo
-        self.determiner = estado_determiner  # solo usado para consulta
+    def __init__(self, estado_determiner, handlers):
+        self.determiner = estado_determiner
+        self.handlers = handlers
 
     def crear_materia(self, datos: dict):
         materia = Materia(datos)
-        self.repo.agregar_materia(materia)
+        self.handlers["materia"].agregar(materia)
         return materia
+    
+    def obtener_materias(self):
+        return self.handlers["materia"].obtener_todas()
+    
+    def eliminar_materia(self, id: int):
+        self.handlers["materia"].eliminar(id)
+    
+    def modificar_materia(self, id: int, atributo: str, valor):
+        self.handlers["materia"].modificar(id, atributo, valor)
 
     def agregar_parcial(self, id: int, valor: float):
         parcial = Parcial({
@@ -21,8 +30,14 @@ class MateriaService:
                 "valor_recuperatorio": None
             })
 
-        self.repo.agregar_parcial(parcial)
+        self.handlers["parcial"].agregar(parcial)
         return parcial
+    
+    def modificar_parcial(self, id: int, atributo: str, valor):
+        self.handlers["parcial"].modificar(id, atributo, valor)
+    
+    def obtener_parciales(self, materia):
+        return self.handlers["parcial"].obtener_todas_de(materia)
     
     def agregar_final(self, id: int, valor: float):
         final = Final({
@@ -31,19 +46,34 @@ class MateriaService:
                 "valor_nota": valor,
             })
 
-        self.repo.agregar_final(final)
+        self.handlers["final"].agregar(final)
         return final
+    
+    def modificar_final(self, id: int, atributo: str, valor):
+        self.handlers["final"].modificar(id, atributo, valor)
+    
+    def obtener_finales(self, materia):
+        return self.handlers["final"].obtener_todas_de(materia)
 
     def agregar_recuperatorio(self, id_materia: int, id_nota: int, valor: float):
-        self.repo.agregar_recuperatorio(id_materia, id_nota, valor)
-        parcial = self.repo.obtener_parcial(id_nota)
+        self.handlers["parcial"].agregar_recuperatorio(id_materia, id_nota, valor)
+        parcial = self.handlers["parcial"].obtener(id_nota)
         return parcial
+    
+    def determinar_estado(self, materia):
+        parciales = self.obtener_parciales(materia)
+        finales = self.obtener_finales(materia)
+        return self.determiner.determinar_estado(Datos(materia, parciales, finales))
 
     def obtener_materia_con_estado(self, id: int):
-        materia = self.repo.obtener_materia(id)
+        materia = self.handlers["materia"].obtener(id)
         if not materia:
             raise ValueError("Materia no encontrada")
-        parciales = self.repo.obtener_parciales(materia)
-        finales = self.repo.obtener_finales(materia)
-        estado = self.determiner.determinar_estado(Datos(materia, parciales, finales))
+        estado = self.determinar_estado(materia)
         return materia, estado
+    
+    def eliminar_base(self):
+        self.handlers["repo"].eliminar_base()
+    
+    def mover_notas(self, id_vieja: int, id_nueva: int):
+        self.handlers["repo"].mover_notas(id_vieja, id_nueva)
