@@ -3,7 +3,7 @@ from Dominio.Funciones_sistema.Logica_negocio.builder_determinador import Builde
 from Manejo_consola.cli import CLI
 from Manejo_consola.Acciones_sistema.accion_mostrar_tabla import Mostrar_Tabla
 from api.materia_service import MateriaService
-from api.handlers import MateriaHandler, ParcialHandler, FinalHandler
+from api.handlers import MateriaHandler, ParcialHandler, FinalHandler, RepoHandler
 
 class Menu():
     def __init__(self):
@@ -20,7 +20,8 @@ class Menu():
         handlers = {
             "materia": MateriaHandler(repo),
             "parcial": ParcialHandler(repo),
-            "final": FinalHandler(repo)
+            "final": FinalHandler(repo),
+            "repo": RepoHandler(repo)
         }
 
         self.service = MateriaService(determiner, handlers)
