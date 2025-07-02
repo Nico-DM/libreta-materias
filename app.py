@@ -1,7 +1,7 @@
 from flask import Flask
 from api.routes import crear_rutas
 from api.materia_service import MateriaService
-from api.nota_handlers import ParcialHandler, RecuperatorioHandler, FinalHandler
+from api.handlers import MateriaHandler, ParcialHandler, FinalHandler
 
 # tus clases reales del dominio
 from Persistencia.Facade_Persistencia import Facade_Persistencia
@@ -17,14 +17,14 @@ builder.construir()
 determiner = builder.get_resultado()
 builder.reset()
 handlers = {
-    "parcial": ParcialHandler(),
-    "recuperatorio": RecuperatorioHandler(),
-    "final": FinalHandler()
+    "materia": MateriaHandler(repo),
+    "parcial": ParcialHandler(repo),
+    "final": FinalHandler(repo)
 }
 
-controller = MateriaService(repo, determiner)
+service = MateriaService(determiner, handlers)
 
-app.register_blueprint(crear_rutas(controller))
+app.register_blueprint(crear_rutas(service))
 
 if __name__ == "__main__":
     app.run(debug=True)
