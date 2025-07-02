@@ -69,11 +69,13 @@ class MateriaService:
         return self.determiner.determinar_estado(Datos(materia, parciales, finales))
 
     def obtener_materia_con_estado(self, id: int):
-        materia = self.handlers["materia"].obtener(id)
-        if not materia:
-            raise ValueError("Materia no encontrada")
-        estado = self.determinar_estado(materia)
-        return materia, estado
+        try:
+            materia = self.handlers["materia"].obtener(id)
+            estado = self.determinar_estado(materia)
+            return materia, estado
+        except Exception as e:
+            raise ValueError(f"Materia no encontrada: {str(e)}")
+
     
     def eliminar_base(self):
         self.handlers["repo"].eliminar_base()
