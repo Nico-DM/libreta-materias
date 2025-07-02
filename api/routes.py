@@ -56,12 +56,15 @@ def crear_rutas(service):
     @bp.route("/materias", methods=["GET"])
     def listar_materias():
         materias = service.obtener_materias()
-        return jsonify([materia_to_dict(m) for m in materias])
+        materias_dict = []
+        for m in materias:
+            materias_dict.append(materia_to_dict(m))
+        return jsonify(materias_dict)
 
     @bp.route("/materias/<int:id_materia>", methods=["DELETE"])
     def eliminar_materia(id_materia):
         service.eliminar_materia(id_materia)
-        return '', 204
+        return jsonify({"mensaje": "Materia eliminada correctamente"}), 200
 
     @bp.route("/materias/<int:id_materia>", methods=["PUT"])
     def modificar_materia(id_materia):
@@ -69,7 +72,7 @@ def crear_rutas(service):
         atributo = data.get("atributo")
         valor = data.get("valor")
         service.modificar_materia(id_materia, atributo, valor)
-        return '', 204
+        return jsonify({"mensaje": "Materia modificada correctamente"}), 200
 
     @bp.route("/materias/<int:id_materia>/parciales", methods=["GET"])
     def obtener_parciales(id_materia):
@@ -85,7 +88,7 @@ def crear_rutas(service):
         atributo = data.get("atributo")
         valor = data.get("valor")
         service.modificar_parcial(id_parcial, atributo, valor)
-        return '', 204
+        return jsonify({"mensaje": "Parcial modificado correctamente"}), 200
     
     @bp.route("/materias/<int:id_materia>/finales", methods=["GET"])
     def obtener_finales(id_materia):
@@ -101,7 +104,7 @@ def crear_rutas(service):
         atributo = data.get("atributo")
         valor = data.get("valor")
         service.modificar_final(id_final, atributo, valor)
-        return '', 204
+        return jsonify({"mensaje": "Final modificado correctamente"}), 200
 
     @bp.route("/materias/eliminar_base", methods=["DELETE"])
     def eliminar_base():
