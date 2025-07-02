@@ -1,11 +1,9 @@
 from flask import Flask
 from api.routes import crear_rutas
 from api.materia_service import MateriaService
-from api.handlers import MateriaHandler, ParcialHandler, FinalHandler
+from api.handlers import MateriaHandler, ParcialHandler, FinalHandler, RepoHandler
 
-# tus clases reales del dominio
 from Persistencia.Facade_Persistencia import Facade_Persistencia
-from Dominio.Funciones_sistema.Logica_negocio.determinador_estado import Determinador_Estado
 from Dominio.Funciones_sistema.Logica_negocio.builder_determinador import Builder_Determinador
 
 app = Flask(__name__)
@@ -19,7 +17,8 @@ builder.reset()
 handlers = {
     "materia": MateriaHandler(repo),
     "parcial": ParcialHandler(repo),
-    "final": FinalHandler(repo)
+    "final": FinalHandler(repo),
+    "repo": RepoHandler(repo)
 }
 
 service = MateriaService(determiner, handlers)
