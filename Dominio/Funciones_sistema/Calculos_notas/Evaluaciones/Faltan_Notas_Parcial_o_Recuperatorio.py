@@ -21,9 +21,9 @@ class Faltan_Notas_Parcial_o_Recuperatorio(Evaluacion):
 
         for nota in notas:
             if nota.get_valor_nota() < criterio and not nota.get_valor_recuperatorio():
-                return True
+                return False
         
-        return False
+        return True
 
     def evaluar(self, datos: Datos) -> bool:
         return not (self.__evaluar_cantidad_parciales_mayor_o_igual_min(datos) and self.__evaluar_ningun_parcial_desaprobado_sin_recuperatorio(datos))
