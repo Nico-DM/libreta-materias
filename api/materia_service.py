@@ -74,7 +74,7 @@ class MateriaService:
             estado = self.determinar_estado(materia)
             return materia, estado
         except Exception as e:
-            raise ValueError(f"Materia no encontrada: {str(e)}")
+            raise ValueError("Materia no encontrada")
 
     
     def eliminar_base(self):
