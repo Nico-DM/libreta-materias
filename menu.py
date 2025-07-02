@@ -5,7 +5,7 @@ from Manejo_consola.Acciones_sistema.accion_mostrar_tabla import Mostrar_Tabla
 from api.materia_service import MateriaService
 from api.handlers import MateriaHandler, ParcialHandler, FinalHandler
 
-class Main():
+class Menu():
     def __init__(self):
         self.interfaz_entrada = CLI()
         self.interfaz_salida = self.interfaz_entrada
@@ -25,10 +25,10 @@ class Main():
 
         self.service = MateriaService(determiner, handlers)
 
-    def main(self):
+    def menu(self):
         while True:
             self.accion.hacer_accion()
 
 if __name__ == "__main__":
-    main_ = Main()
-    main_.main()
+    menu = Menu()
+    menu.menu()

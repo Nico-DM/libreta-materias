@@ -2,8 +2,8 @@ from Manejo_consola.Acciones_sistema.accion import Accion
 from Dominio.Materias.materia import Materia
 
 class Seleccionar(Accion):
-    def __init__(self, main, materia: Materia):
-        super().__init__(main)
+    def __init__(self, menu, materia: Materia):
+        super().__init__(menu)
         self.materia_seleccionada: Materia = materia
         self.ACCIONES_DISPONIBLES = {
             "A": (self.cambiar_a_agregar_nota, "Agregar nota"),
@@ -14,19 +14,19 @@ class Seleccionar(Accion):
 
     def cambiar_a_agregar_nota(self):
         from Manejo_consola.Acciones_sistema.accion_agregar_nota import Agregar_Nota
-        self.main.accion = Agregar_Nota(self.main, self.materia_seleccionada)
+        self.menu.accion = Agregar_Nota(self.menu, self.materia_seleccionada)
 
     def cambiar_a_modificar(self):
         from Manejo_consola.Acciones_sistema.accion_modificar import Modificar
-        self.main.accion = Modificar(self.main, self.materia_seleccionada)
+        self.menu.accion = Modificar(self.menu, self.materia_seleccionada)
 
     def cambiar_a_eliminar(self):
         from Manejo_consola.Acciones_sistema.accion_eliminar import Eliminar
-        self.main.accion = Eliminar(self.main, self.materia_seleccionada)
+        self.menu.accion = Eliminar(self.menu, self.materia_seleccionada)
 
     def volver(self):
         from Manejo_consola.Acciones_sistema.accion_mostrar_tabla import Mostrar_Tabla
-        self.main.accion = Mostrar_Tabla(self.main)
+        self.menu.accion = Mostrar_Tabla(self.menu)
 
     def buscar_materia(self, id_materia, materias: list[Materia]) -> Materia:
         for materia in materias:
@@ -35,11 +35,11 @@ class Seleccionar(Accion):
         return self.materia_seleccionada
 
     def hacer_accion(self):
-        materias = self.main.service.obtener_materias()
+        materias = self.menu.service.obtener_materias()
 
         self.materia_seleccionada: Materia = self.buscar_materia(self.materia_seleccionada.get_id_materia(), materias)
 
-        self.main.interfaz_salida.mostrar_info_materia(self.materia_seleccionada, self.main.service)
+        self.menu.interfaz_salida.mostrar_info_materia(self.materia_seleccionada, self.menu.service)
 
-        opcion_elegida = self.main.interfaz_entrada.seleccionar_opcion(self.ACCIONES_DISPONIBLES)
+        opcion_elegida = self.menu.interfaz_entrada.seleccionar_opcion(self.ACCIONES_DISPONIBLES)
         opcion_elegida[0]()

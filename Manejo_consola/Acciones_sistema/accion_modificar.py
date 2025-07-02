@@ -1,8 +1,8 @@
 from Manejo_consola.Acciones_sistema.accion import Accion
 
 class Modificar(Accion):
-    def __init__(self, main, materia):
-        super().__init__(main)
+    def __init__(self, menu, materia):
+        super().__init__(menu)
         self.materia_seleccionada = materia
         self.OPCIONES_DISPONIBLES = {
             "A": (self.elegir_atributo, "Modificar atributo"),
@@ -22,7 +22,7 @@ class Modificar(Accion):
         }
 
     def elegir_atributo(self):
-        atributo_elegido = self.main.interfaz_entrada.seleccionar_opcion(self.ATRIBUTOS_DISPONIBLES)
+        atributo_elegido = self.menu.interfaz_entrada.seleccionar_opcion(self.ATRIBUTOS_DISPONIBLES)
         self.cambiar_a_modificar_atributo(atributo_elegido)
 
     def buscar_nota(self, id_nota, notas):
@@ -32,55 +32,55 @@ class Modificar(Accion):
         return None
 
     def modificar_parcial(self):
-        notas = self.main.service.obtener_parciales(self.materia_seleccionada)
+        notas = self.menu.service.obtener_parciales(self.materia_seleccionada)
 
         if len(notas) > 0:
-            self.main.interfaz_salida.mostrar_notas(notas, recu=True, id=True)
+            self.menu.interfaz_salida.mostrar_notas(notas, recu=True, id=True)
 
             encontrada = False
             while not encontrada:
-                id_elegida = self.main.interfaz_entrada.obtener_entero("ID")
+                id_elegida = self.menu.interfaz_entrada.obtener_entero("ID")
                 nota_seleccionada = self.buscar_nota(id_elegida, notas)
                 if nota_seleccionada:
                     encontrada = True
                 else:
-                    self.main.interfaz_salida.mostrar_advertencia("id_no_disponible")
+                    self.menu.interfaz_salida.mostrar_advertencia("id_no_disponible")
 
             from Manejo_consola.Acciones_sistema.accion_modificar_parcial import Modificar_Parcial
-            self.main.accion = Modificar_Parcial(self.main, self.materia_seleccionada, id_elegida)
+            self.menu.accion = Modificar_Parcial(self.menu, self.materia_seleccionada, id_elegida)
         else:
-            self.main.interfaz_salida.mostrar_advertencia("sin_notas")
+            self.menu.interfaz_salida.mostrar_advertencia("sin_notas")
             self.volver()
     
     def modificar_final(self):
-        notas = self.main.service.obtener_finales(self.materia_seleccionada)
+        notas = self.menu.service.obtener_finales(self.materia_seleccionada)
 
         if len(notas) > 0:
-            self.main.interfaz_salida.mostrar_notas(notas, id=True)
+            self.menu.interfaz_salida.mostrar_notas(notas, id=True)
 
             encontrada = False
             while not encontrada:
-                id_elegida = self.main.interfaz_entrada.obtener_entero("ID")
+                id_elegida = self.menu.interfaz_entrada.obtener_entero("ID")
                 nota_seleccionada = self.buscar_nota(id_elegida, notas)
                 if nota_seleccionada:
                     encontrada = True
                 else:
-                    self.main.interfaz_salida.mostrar_advertencia("id_inexistente")
+                    self.menu.interfaz_salida.mostrar_advertencia("id_inexistente")
 
             from Manejo_consola.Acciones_sistema.accion_modificar_final import Modificar_Final
-            self.main.accion = Modificar_Final(self.main, self.materia_seleccionada, id_elegida)
+            self.menu.accion = Modificar_Final(self.menu, self.materia_seleccionada, id_elegida)
         else:
-            self.main.interfaz_salida.mostrar_advertencia("sin_notas")
+            self.menu.interfaz_salida.mostrar_advertencia("sin_notas")
             self.volver()
 
     def cambiar_a_modificar_atributo(self, atributo):
         from Manejo_consola.Acciones_sistema.accion_modificar_atributo import Modificar_Atributo
-        self.main.accion = Modificar_Atributo(self.main, self.materia_seleccionada, atributo)
+        self.menu.accion = Modificar_Atributo(self.menu, self.materia_seleccionada, atributo)
 
     def volver(self):
         from Manejo_consola.Acciones_sistema.accion_seleccionar import Seleccionar
-        self.main.accion = Seleccionar(self.main, self.materia_seleccionada)
+        self.menu.accion = Seleccionar(self.menu, self.materia_seleccionada)
 
     def hacer_accion(self):
-        opcion_elegida = self.main.interfaz_entrada.seleccionar_opcion(self.OPCIONES_DISPONIBLES)
+        opcion_elegida = self.menu.interfaz_entrada.seleccionar_opcion(self.OPCIONES_DISPONIBLES)
         opcion_elegida[0]()
