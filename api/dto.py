@@ -44,8 +44,21 @@ def materia_con_notas_to_dict(materia: Materia, parciales: list[Parcial], finale
         "finales": finales_dict
     }
 
-def materia_con_estado_to_dict(materia, estado):
+def resultados_to_dict(resultados):
+    diccionario = {}
+    diccionario["estado"] = resultados["estado"].name
+    try:
+        diccionario["nota_final"] = resultados["nota_final"]
+    except KeyError:
+        diccionario["nota_final"] = None
+    try:
+        diccionario["intentos_final_restantes"] = resultados["intentos_final_restantes"]
+    except KeyError:
+        diccionario["intentos_final_restantes"] = None
+    return diccionario
+
+def materia_con_resultados_to_dict(materia, resultados):
     return {
         "datos_materia": materia_to_dict(materia),
-        "estado": estado
+        "resultados": resultados_to_dict(resultados)
     }

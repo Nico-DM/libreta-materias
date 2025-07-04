@@ -15,7 +15,9 @@ class TestMateriaService(unittest.TestCase):
             "repo": MagicMock()
         }
         self.determiner = MagicMock()
-        self.service = MateriaService(self.determiner, self.handlers)
+        self.promediador = MagicMock()
+        self.indicador_cantidad_finales = MagicMock()
+        self.service = MateriaService(self.determiner, self.handlers, self.promediador, self.indicador_cantidad_finales)
 
         self.datos_materia = {
             "id_materia": 1,
@@ -75,7 +77,7 @@ class TestMateriaService(unittest.TestCase):
         self.handlers["parcial"].obtener.assert_called_once_with(10)
         self.assertEqual(result, parcial_mock)
 
-    def test_determinar_estado(self):
+    def test_determinar_resultados(self):
         materia_mock = Mock()
         parciales_mock = [Mock()]
         finales_mock = [Mock()]
@@ -83,25 +85,25 @@ class TestMateriaService(unittest.TestCase):
         self.handlers["final"].obtener_todas_de.return_value = finales_mock
         self.determiner.determinar_estado.return_value = "PROMOCIONADO"
 
-        estado = self.service.determinar_estado(materia_mock)
-        self.assertEqual(estado, "PROMOCIONADO")
+        resultados = self.service.determinar_resultados(materia_mock)
+        self.assertEqual(resultados["estado"], "PROMOCIONADO")
 
-    def test_obtener_materia_con_estado_ok(self):
+    def test_obtener_materia_con_resultados_ok(self):
         materia_mock = Mock()
         self.handlers["materia"].obtener.return_value = materia_mock
         self.handlers["parcial"].obtener_todas_de.return_value = []
         self.handlers["final"].obtener_todas_de.return_value = []
         self.determiner.determinar_estado.return_value = "REGULAR"
 
-        materia, estado = self.service.obtener_materia_con_estado(1)
+        materia, resultados = self.service.obtener_materia_con_resultados(1)
         self.assertEqual(materia, materia_mock)
-        self.assertEqual(estado, "REGULAR")
+        self.assertEqual(resultados["estado"], "REGULAR")
 
     # --- Casos de error ---
-    def test_obtener_materia_con_estado_error(self):
+    def test_obtener_materia_con_resultados_error(self):
         self.handlers["materia"].obtener.side_effect = Exception("No existe")
         with self.assertRaises(ValueError) as ctx:
-            self.service.obtener_materia_con_estado(999)
+            self.service.obtener_materia_con_resultados(999)
         self.assertEqual(str(ctx.exception), "Materia no encontrada")
 
     def test_eliminar_base(self):

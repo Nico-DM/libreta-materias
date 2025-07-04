@@ -1,11 +1,6 @@
 from Manejo_consola.interfaces.input import Interfaz_Input
 from Manejo_consola.interfaces.output import Interfaz_Output
-from Dominio.Funciones_sistema.Calculos_notas.Evaluaciones.Cantidad_Finales_Menor_Max import Cantidad_Finales_Menor_Max
-from Dominio.Funciones_sistema.Logica_negocio.indicador_cantidad_finales_restantes import Indicador_Cantidad_Finales_Restantes
 from Dominio.Funciones_sistema.Logica_negocio.enum_estado import Estado
-from Dominio.Funciones_sistema.Calculos_notas.promedio import Promedio
-from Dominio.Funciones_sistema.Logica_negocio.determinador_estado import Determinador_Estado
-from Dominio.Materias.datos import Datos
 from Dominio.Materias.materia import Materia
 
 class CLI(Interfaz_Input, Interfaz_Output):
@@ -69,7 +64,7 @@ class CLI(Interfaz_Input, Interfaz_Output):
             )
 
             for materia in materias:
-                estado = service.determinar_estado(materia)
+                estado = service.determinar_resultados(materia)["estado"]
 
                 print(
                     materia.get_id_materia(),
@@ -117,7 +112,7 @@ class CLI(Interfaz_Input, Interfaz_Output):
 
         print(f"Cantidad de Parciales: {materia_seleccionada.get_cant_parciales()}")
 
-        parciales = service.obtener_parciales(materia_seleccionada)
+        parciales = service.obtener_parciales(materia_seleccionada.get_id_materia())
 
         if len(parciales) > 0:
             print("\t-- PARCIALES --")
@@ -125,7 +120,7 @@ class CLI(Interfaz_Input, Interfaz_Output):
         else:
             print("No hay parciales registrados de esta materia.")
 
-        finales = service.obtener_finales(materia_seleccionada)
+        finales = service.obtener_finales(materia_seleccionada.get_id_materia())
 
         if len(finales) > 0:
             print("\t-- FINALES --")
@@ -135,17 +130,13 @@ class CLI(Interfaz_Input, Interfaz_Output):
 
         print("----------")
 
-        estado = service.determinar_estado(materia_seleccionada)
+        resultados = service.determinar_resultados(materia_seleccionada)
 
-        print(f"ESTADO: {estado.name}")
+        print(f"ESTADO: {resultados["estado"].name}")
 
-        if estado == Estado.REGULARIZADO:
-            indicador = Indicador_Cantidad_Finales_Restantes(Cantidad_Finales_Menor_Max())
-            print(f"Oportunidades de final restantes: {indicador.cantidad_finales_restante(finales, materia_seleccionada)}")
-        elif estado == Estado.APROBADO:
-            print(f"Nota final de la materia: {finales[-1].valor_nota}")
-        elif estado == Estado.PROMOCIONADO:
-            promedio = Promedio()
-            print(f"Nota final de la materia: {promedio.promediar(parciales)}")
+        if resultados["estado"] == Estado.REGULARIZADO:
+            print(f"Oportunidades de final restantes: {resultados["intentos_final_restantes"]}")
+        elif resultados["estado"] == Estado.APROBADO or resultados["estado"] == Estado.PROMOCIONADO:
+            print(f"Nota final de la materia: {resultados["nota_final"]}")
         
         print("-------------------------------------------------")

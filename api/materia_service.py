@@ -2,11 +2,14 @@ from Dominio.Materias.materia import Materia
 from Dominio.Materias.parcial import Parcial
 from Dominio.Materias.final import Final
 from Dominio.Materias.datos import Datos
+from Dominio.Funciones_sistema.Logica_negocio.enum_estado import Estado
 
 class MateriaService:
-    def __init__(self, estado_determiner, handlers):
+    def __init__(self, estado_determiner, handlers, promediador, indicador_cantidad_finales):
         self.determiner = estado_determiner
         self.handlers = handlers
+        self.promediador = promediador
+        self.indicador_cantidad_finales = indicador_cantidad_finales
 
     def crear_materia(self, datos: dict):
         materia = Materia(datos)
@@ -62,20 +65,28 @@ class MateriaService:
         parcial = self.handlers["parcial"].obtener(id_nota)
         return parcial
     
-    def determinar_estado(self, materia):
+    def determinar_resultados(self, materia):
         id_materia = materia.get_id_materia()
         parciales = self.obtener_parciales(id_materia)
         finales = self.obtener_finales(id_materia)
-        return self.determiner.determinar_estado(Datos(materia, parciales, finales))
+        resultados = {}
+        estado = self.determiner.determinar_estado(Datos(materia, parciales, finales))
+        resultados["estado"] = estado
+        if estado == Estado.APROBADO:
+            resultados["nota_final"] = finales[-1].get_valor_nota()
+        elif estado == Estado.PROMOCIONADO:
+            resultados["nota_final"] = self.promediador.promediar(parciales)
+        elif estado == Estado.REGULARIZADO:
+            resultados["intentos_final_restantes"] = self.indicador_cantidad_finales.cantidad_finales_restante(finales, materia)
+        return resultados
 
-    def obtener_materia_con_estado(self, id: int):
+    def obtener_materia_con_resultados(self, id: int):
         try:
             materia = self.handlers["materia"].obtener(id)
-            estado = self.determinar_estado(materia)
-            return materia, estado
-        except Exception as e:
+            resultados = self.determinar_resultados(materia)
+            return materia, resultados
+        except Exception:
             raise ValueError("Materia no encontrada")
-
     
     def eliminar_base(self):
         self.handlers["repo"].eliminar_base()
