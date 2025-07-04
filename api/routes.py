@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.dto import materia_to_dict, parcial_to_dict, final_to_dict, materia_con_estado_to_dict
+from api.dto import materia_to_dict, parcial_to_dict, final_to_dict, materia_con_resultados_to_dict
 
 def crear_rutas(service):
     bp = Blueprint("materias", __name__)
@@ -48,8 +48,8 @@ def crear_rutas(service):
     @bp.route("/materias/<id_materia>", methods=["GET"])
     def obtener(id_materia):
         try:
-            materia, estado = service.obtener_materia_con_estado(int(id_materia))
-            return jsonify(materia_con_estado_to_dict(materia, estado.name))
+            materia, resultados = service.obtener_materia_con_resultados(int(id_materia))
+            return jsonify(materia_con_resultados_to_dict(materia, resultados))
         except ValueError as e:
             return jsonify({"error": str(e)}), 404
 
